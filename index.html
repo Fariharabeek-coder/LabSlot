@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LabSlot | College Lab Booking</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+  <!-- Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-icon"><i class="bi bi-pc-display-horizontal"></i></div>
+      <div>
+        <h4>LabSlot</h4>
+        <small>College Lab Portal</small>
+      </div>
+    </div>
+
+    <div class="sidebar-label">MAIN MENU</div>
+
+    <button class="nav-item active" data-page="dashboard">
+      <i class="bi bi-grid-1x2-fill"></i> Dashboard
+    </button>
+
+    <button class="nav-item" data-page="availability">
+      <i class="bi bi-calendar2-check"></i> Lab Availability
+    </button>
+
+    <button class="nav-item" data-page="book">
+      <i class="bi bi-plus-circle"></i> Book a System
+    </button>
+
+    <button class="nav-item" data-page="history">
+      <i class="bi bi-clock-history"></i> Booking History
+    </button>
+
+    <div class="sidebar-label">ADMINISTRATION</div>
+
+    <button class="nav-item" data-page="admin">
+      <i class="bi bi-shield-lock"></i> Admin Panel
+    </button>
+
+    <div class="sidebar-footer">
+      <div class="avatar"><i class="bi bi-person"></i></div>
+      <div>
+        <strong id="sidebarUser">Student</strong>
+        <small id="sidebarRole">Student Portal</small>
+      </div>
+      <button class="icon-button ms-auto" id="logoutBtn"
+              title="Log out" hidden>
+        <i class="bi bi-box-arrow-right"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <main class="main-area">
+
+    <header class="topbar">
+      <button class="icon-button mobile-menu" id="menuBtn"
+              aria-label="Open menu">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <div>
+        <div class="topbar-title" id="pageTitle">Dashboard</div>
+        <small class="muted" id="todayLabel"></small>
+      </div>
+
+      <div class="topbar-right">
+        <span class="status-dot"></span>
+        <span class="muted">Local Demo</span>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <section class="page active" id="page-dashboard">
+        <div class="welcome-banner">
+          <div>
+            <span class="eyebrow">LAB MANAGEMENT PORTAL</span>
+            <h1>Welcome to LabSlot 👋</h1>
+            <p>Find an available computer and reserve it for your lab session.</p>
+            <button class="btn btn-light mt-2" data-go="availability">
+              Check Availability <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+          <div class="banner-icon">
+            <i class="bi bi-pc-display"></i>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-1" id="dashboardStats"></div>
+
+        <div class="section-heading mt-4">
+          <div>
+            <h3>Computer Science Laboratories</h3>
+            <p>Check the current status of each laboratory.</p>
+          </div>
+          <button class="btn btn-outline-primary" data-go="availability">
+            View All <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+
+        <div class="row g-3" id="dashboardLabs"></div>
+
+        <div class="section-heading mt-4">
+          <div>
+            <h3>Recent Bookings</h3>
+            <p>Your latest lab reservations.</p>
+          </div>
+          <button class="btn btn-outline-primary" data-go="history">
+            Booking History
+          </button>
+        </div>
+
+        <div class="panel">
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Laboratory</th>
+                  <th>Systems</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="recentBookings"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- AVAILABILITY -->
+      <section class="page" id="page-availability">
+        <div class="page-intro">
+          <span class="eyebrow">CHECK BEFORE YOU BOOK</span>
+          <h2>Lab Availability</h2>
+          <p>Choose a date and time to see which individual systems are free.</p>
+        </div>
+
+        <div class="panel">
+          <form id="availabilityForm" class="row g-3 align-items-end">
+            <div class="col-md-4">
+              <label class="form-label" for="availabilityDate">Date</label>
+              <input class="form-control" type="date"
+                     id="availabilityDate" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="availabilityStart">Start Time</label>
+              <input class="form-control" type="time"
+                     id="availabilityStart" value="09:00" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="availabilityEnd">End Time</label>
+              <input class="form-control" type="time"
+                     id="availabilityEnd" value="10:00" required>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary w-100" type="submit">
+                <i class="bi bi-search"></i> Check
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="legend mt-3">
+          <span><i class="legend-box available"></i> Available</span>
+          <span><i class="legend-box booked"></i> Booked</span>
+          <span><i class="legend-box maintenance"></i> Maintenance</span>
+        </div>
+
+        <div id="availabilityResults" class="mt-3"></div>
+      </section>
+
+      <!-- BOOK SYSTEM -->
+      <section class="page" id="page-book">
+        <div class="page-intro">
+          <span class="eyebrow">RESERVE YOUR WORKSTATION</span>
+          <h2>Book a Computer System</h2>
+          <p>Select your lab, time slot and the exact systems you need.</p>
+        </div>
+
+        <div class="panel">
+          <form id="bookingForm">
+            <div class="form-section-title">
+              <span class="step-number">1</span>
+              <div>
+                <h5>Booking Details</h5>
+                <small>Enter your details and session time.</small>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="studentName">Student / Faculty Name</label>
+                <input class="form-control" id="studentName"
+                       maxlength="80" required placeholder="Enter your name">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="studentId">Register / Staff ID</label>
+                <input class="form-control" id="studentId"
+                       maxlength="40" required placeholder="Enter your ID">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="bookingLab">Laboratory</label>
+                <select class="form-select" id="bookingLab" required>
+                  <option value="">Select a laboratory</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="bookingDate">Booking Date</label>
+                <input class="form-control" type="date"
+                       id="bookingDate" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="bookingStart">Start Time</label>
+                <input class="form-control" type="time"
+                       id="bookingStart" value="09:00" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label" for="bookingEnd">End Time</label>
+                <input class="form-control" type="time"
+                       id="bookingEnd" value="10:00" required>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="form-section-title">
+              <span class="step-number">2</span>
+              <div>
+                <h5>Select Individual Systems</h5>
+                <small>Choose only the computers you want to reserve.</small>
+              </div>
+            </div>
+
+            <div id="bookingLabSummary" class="info-box mb-3">
+              Select a laboratory to view its systems.
+            </div>
+
+            <div class="d-flex flex-wrap gap-3 mb-3">
+              <span class="small"><i class="legend-box available"></i> Available</span>
+              <span class="small"><i class="legend-box booked"></i> Booked</span>
+              <span class="small"><i class="legend-box maintenance"></i> Maintenance</span>
+              <span class="small"><i class="legend-box selected"></i> Selected</span>
+            </div>
+
+            <div id="systemSelection" class="system-grid"></div>
+
+            <div class="selection-summary mt-3">
+              <div>
+                <strong id="selectedCount">0 systems selected</strong>
+                <div class="muted small" id="selectedNames">No systems selected</div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-secondary"
+                      id="clearSelectionBtn">Clear Selection</button>
+            </div>
+
+            <div class="mt-4">
+              <label class="form-label" for="bookingPurpose">Purpose of Booking</label>
+              <textarea class="form-control" id="bookingPurpose"
+                        rows="2" maxlength="300"
+                        placeholder="Example: Java programming practical"></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+              <button class="btn btn-primary btn-lg" type="submit">
+                <i class="bi bi-calendar-check me-2"></i>Confirm Booking
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- BOOKING HISTORY -->
+      <section class="page" id="page-history">
+        <div class="page-intro">
+          <span class="eyebrow">YOUR RESERVATIONS</span>
+          <h2>Booking History</h2>
+          <p>Search, review and cancel your bookings.</p>
+        </div>
+
+        <div class="panel">
+          <div class="row g-3 mb-3">
+            <div class="col-md-8">
+              <label class="form-label" for="historySearch">Search bookings</label>
+              <input class="form-control" id="historySearch"
+                     placeholder="Search by booking ID, name, register ID or lab">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="historyStatus">Filter by status</label>
+              <select class="form-select" id="historyStatus">
+                <option value="all">All Bookings</option>
+                <option value="Booked">Booked</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Name / ID</th>
+                  <th>Laboratory</th>
+                  <th>Systems</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="historyTable"></tbody>
+            </table>
+          </div>
+          <div id="historyEmpty" class="empty-state" hidden>
+            <i class="bi bi-calendar-x"></i>
+            <h5>No bookings found</h5>
+            <p>Try another search or create a new booking.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADMIN -->
+      <section class="page" id="page-admin">
+        <div class="page-intro">
+          <span class="eyebrow">MANAGEMENT</span>
+          <h2>Admin Panel</h2>
+          <p>Manage Computer Science labs, maintenance and reservations.</p>
+        </div>
+
+        <div id="adminLogin" class="panel login-panel">
+          <div class="login-icon"><i class="bi bi-shield-lock"></i></div>
+          <h4>Administrator Login</h4>
+          <p class="muted">Sign in to access lab management features.</p>
+
+          <form id="adminLoginForm">
+            <label class="form-label" for="adminPassword">Admin Password</label>
+            <input class="form-control mb-3" type="password"
+                   id="adminPassword" required placeholder="Enter admin password">
+            <button class="btn btn-primary w-100" type="submit">Sign In</button>
+            <div class="small muted mt-3">
+              Demo password: <code>admin123</code>
+            </div>
+          </form>
+        </div>
+
+        <div id="adminContent" hidden>
+          <div class="admin-toolbar">
+            <div>
+              <h4>Lab Management</h4>
+              <p class="muted mb-0">Create, update and maintain laboratories.</p>
+            </div>
+            <button class="btn btn-primary" id="addLabBtn">
+              <i class="bi bi-plus-lg"></i> Add Laboratory
+            </button>
+          </div>
+
+          <div class="panel mt-3">
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Laboratory</th>
+                    <th>Systems</th>
+                    <th>Status</th>
+                    <th>Maintenance</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adminLabsTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="section-heading mt-4">
+            <div>
+              <h3>All Booking Records</h3>
+              <p>Review all reservations saved in this browser.</p>
+            </div>
+            <button class="btn btn-outline-primary" id="exportBtn">
+              <i class="bi bi-download"></i> Export CSV
+            </button>
+          </div>
+
+          <div class="panel">
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Booking ID</th>
+                    <th>Person</th>
+                    <th>Laboratory</th>
+                    <th>Systems</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="adminBookingsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <footer class="footer">
+      LabSlot &copy; <span id="footerYear"></span> · College Laboratory Booking System
+    </footer>
+  </main>
+</div>
+
+<!-- Add / Edit Laboratory Modal -->
+<div class="modal fade" id="labModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form id="labForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="labModalTitle">Add Laboratory</h5>
+          <button type="button" class="btn-close"
+                  data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" id="editLabId">
+
+          <div class="mb-3">
+            <label class="form-label" for="labName">Laboratory Name</label>
+            <input class="form-control" id="labName" required maxlength="80">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="labCapacity">Number of Systems</label>
+            <input class="form-control" id="labCapacity"
+                   type="number" min="1" max="200" required>
+            <small class="muted">System IDs will be generated automatically.</small>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="labMaintenance">
+            <label class="form-check-label" for="labMaintenance">
+              Mark entire laboratory as under maintenance
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light"
+                  data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Laboratory</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Notification -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+  <div id="appToast" class="toast" role="status" aria-live="polite">
+    <div class="toast-header">
+      <span class="toast-indicator me-2"></span>
+      <strong class="me-auto" id="toastTitle">LabSlot</strong>
+      <button type="button" class="btn-close"
+              data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body" id="toastMessage"></div>
+  </div>
+</div>
+
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Application JavaScript -->
+<script src="app.js"></script>
+
+</body>
+</html>
